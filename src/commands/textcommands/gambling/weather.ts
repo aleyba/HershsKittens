@@ -125,7 +125,10 @@ export default class WeatherCommand extends ManiCommand {
 		});
 
 		buttonCollector.on('collect', async (i: Discord.ButtonInteraction) => {
-            i.deferUpdate();			
+            i.deferUpdate();
+			
+			// Check if the channel is a TextChannel
+			if (message.channel.type !== Discord.ChannelType.GuildText) return;
 
 			if (i.customId === 'double') {
 				betAmount *= 2;
@@ -161,6 +164,9 @@ export default class WeatherCommand extends ManiCommand {
 
 		buttonCollector.on('end', () => {
 			if (gameEnded) return;
+
+			// Check if the channel is a TextChannel
+			if (message.channel.type !== Discord.ChannelType.GuildText) return;
 
             gambleMessage.edit({ components: [] })			
 			message.channel.send(`**${message.author.username}**, you waited too long and lost **${utils.getGoldStr(betAmount)}**`);

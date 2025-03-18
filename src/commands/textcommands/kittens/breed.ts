@@ -188,7 +188,10 @@ export default class BreedCommand extends ManiCommand {
         });
 
         buttonCollector.on('collect', async (i: Discord.ButtonInteraction) => {
-            i.deferUpdate();			
+            i.deferUpdate();
+            
+            // Check if the channel is a TextChannel
+            if (message.channel.type !== Discord.ChannelType.GuildText) return;
             
             if (player.breeding.kitten) {
                 if (i.customId === 'adopt') {
@@ -217,6 +220,9 @@ export default class BreedCommand extends ManiCommand {
                             }
                         }
 
+                        // Check if the channel is a TextChannel
+                        if (message.channel.type !== Discord.ChannelType.GuildText) return;
+
                         if (player.breeding.kitten) {
                             const adoptedKitten = player.breeding.kitten;
                             adoptedKitten.name = kittenName;                            
@@ -224,7 +230,7 @@ export default class BreedCommand extends ManiCommand {
                             player.breeding.kitten = undefined;
                             player.breeding.breedingDate = getDateNow();
                             client.database.updatePlayer(player).then(succeeded => {
-                                if (succeeded) {
+                                if (succeeded && (message.channel.type == Discord.ChannelType.GuildText)) {
                                     kittenMaleSelectRow = this.createKittenSelectRow(player, 1, selectedMale);        
                                     kittenFemaleSelectRow = this.createKittenSelectRow(player, 0, selectedFemale);  
                                     breedingEmbed = this.createBreedingEmbed(message.author, player, selectedMale, selectedFemale);                          

@@ -64,6 +64,9 @@ export default class AdoptCommand extends ManiCommand {
 
         let kittenSelection: IPlayerCat | undefined = undefined;
 
+        // Check if the channel is a TextChannel
+        if (message.channel.type !== Discord.ChannelType.GuildText) return;
+
         // let catMessage = await message.channel.send(catOptionString);
         await message.channel.send("**Hersh:** It's a beautiful day to adopt a kitten don't you think?");
         let botMessage = await message.channel.send({ embeds: [hershEmbed], components: [kittenSelectRow] });
@@ -96,7 +99,10 @@ export default class AdoptCommand extends ManiCommand {
         });
 
         buttonCollector.on('collect', async (i: Discord.ButtonInteraction) => {
-            i.deferUpdate();			
+            i.deferUpdate();	
+            
+            // Check if the channel is a TextChannel
+            if (message.channel.type !== Discord.ChannelType.GuildText) return;
 
             if (i.customId === 'back') {
                 botMessage.edit({ embeds: [hershEmbed], components: [kittenSelectRow] });
@@ -129,6 +135,9 @@ export default class AdoptCommand extends ManiCommand {
 
                     messageCollector.on('end', () => {
                         if (!kittenSelection) return;
+
+                        // Check if the channel is a TextChannel
+                        if (message.channel.type !== Discord.ChannelType.GuildText) return;
                       
                         if (player.cats.find(cat => cat.name == kittenName)) {
                             for (let num = 2; num < 99; num ++) {
@@ -148,7 +157,7 @@ export default class AdoptCommand extends ManiCommand {
                         player.money -= 1000;
                         player.currency.totalAdoptionSpendings -= 1000;
                         client.database.updatePlayer(player).then(succeeded => {
-                            if (succeeded) {
+                            if (succeeded && (message.channel.type == Discord.ChannelType.GuildText)) {
                                 message.channel.send({ content: `${kittenSelection?.data?.icon.forward}` });
                                 message.channel.send(`You adopted **${kittenName}**!`);  
                                 if (player.cats.length > 0) {                                    

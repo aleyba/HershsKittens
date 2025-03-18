@@ -146,7 +146,10 @@ export default class KittenCommand extends ManiCommand {
         });
 
         buttonCollector.on('collect', async (i: Discord.ButtonInteraction) => {
-            i.deferUpdate();			
+            i.deferUpdate();		
+            
+            // Check if the channel is a TextChannel
+            if (message.channel.type !== Discord.ChannelType.GuildText) return;
             
             if (i.customId === 'back') {
                 activeKitten = player.cats.find(cat => cat.active);
@@ -171,7 +174,7 @@ export default class KittenCommand extends ManiCommand {
                 if (activeKitten && activeKitten.happiness < 100) {
                     performAction(activeKitten, CatActions.pet);
                     client.database.updatePlayer(player).then(succeeded => {
-                        if (succeeded && activeKitten) {
+                        if (succeeded && activeKitten && (message.channel.type == Discord.ChannelType.GuildText)) {
                             catEmbed = this.createCatEmbed(message.author, player, activeKitten);
                             botMessage.edit({ embeds: [catEmbed], components: [kittenActionRow] });
                             message.channel.send(`You pet **${activeKitten.name}** 🫳`);
@@ -190,7 +193,7 @@ export default class KittenCommand extends ManiCommand {
                         performAction(activeKitten, CatActions.feed);                        
                         await player.takeItemFromInventory(foodItemIndex, 1);                        
                         client.database.updatePlayer(player).then(succeeded => {
-                            if (succeeded && activeKitten) {
+                            if (succeeded && activeKitten && (message.channel.type == Discord.ChannelType.GuildText)) {
                                 catEmbed = this.createCatEmbed(message.author, player, activeKitten);
                                 botMessage.edit({ embeds: [catEmbed], components: [kittenActionRow] });
                                 message.channel.send(`You fed **${activeKitten.name}** 🥫 *You have ${foodCount - 1} food left...*`);
@@ -211,7 +214,7 @@ export default class KittenCommand extends ManiCommand {
                         performAction(activeKitten, CatActions.wash);
                         await player.takeItemFromInventory(soapItemIndex, 1);                        
                         client.database.updatePlayer(player).then(succeeded => {
-                            if (succeeded && activeKitten) {
+                            if (succeeded && activeKitten && (message.channel.type == Discord.ChannelType.GuildText)) {
                                 catEmbed = this.createCatEmbed(message.author, player, activeKitten);
                                 botMessage.edit({ embeds: [catEmbed], components: [kittenActionRow] });
                                 message.channel.send(`You washed **${activeKitten.name}** 🧼 *You have ${soapCount - 1} soap left...*`);

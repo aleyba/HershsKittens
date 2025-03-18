@@ -100,7 +100,10 @@ export default class MarryCommand extends ManiCommand {
 		});
 
 		buttonCollector.on('collect', async (i: Discord.ButtonInteraction) => {
-			i.deferUpdate();			
+			i.deferUpdate();
+			
+			// Check if the channel is a TextChannel
+			if (message.channel.type !== Discord.ChannelType.GuildText) return;
 
 			if (i.customId === 'yes') {
 				acceptButton.setStyle(Discord.ButtonStyle.Secondary);
